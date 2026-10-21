@@ -1,37 +1,51 @@
 [
-{
-"title": "GitHub",
-"url": "https://github.com",
-"description": "全球最大的程式碼託管與開源社群平台。",
-"category": "開發工具",
-"icon": "fa-brands fa-github"
-},
-{
-"title": "YouTube",
-"url": "https://youtube.com",
-"description": "觀看熱門影片、音樂與可愛貓咪短片的影音平台。",
-"category": "影音娛樂",
-"icon": "fa-brands fa-youtube"
-},
-{
-"title": "ChatGPT",
-"url": "https://chatgpt.com",
-"description": "強大的 AI 智慧助手，隨時解答你的疑難雜症。",
-"category": "AI 工具",
-"icon": "fa-solid fa-[#0284c7] fa-robot"
-},
-{
-"title": "Tailwind CSS",
-"url": "https://tailwindcss.com",
-"description": "快速打造現代化響應式介面的 Utility-first CSS 框架。",
-"category": "開發工具",
-"icon": "fa-solid fa-code"
-},
-{
-"title": "Unsplash",
-"url": "https://unsplash.com",
-"description": "免費高畫質無版權圖片下載網站。",
-"category": "設計資源",
-"icon": "fa-solid fa-image"
-}
+  {
+    "title": "Split PDF Pages",
+    "url": "https://splitpdf.losiuming.com/",
+    "description": "",
+    "category": "Admin",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "Compress PDF",
+    "url": "https://script.google.com/a/macros/cch.edu.hk/s/AKfycby0GzogM67TOGRC00GIMuUhUbWCIy9Xj6dsuHsU64h4dAbSJPdnBowYAXDRiD5OxhFi/exec",
+    "description": "",
+    "category": "Admin",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "PDF to JPG",
+    "url": "https://script.google.com/a/macros/cch.edu.hk/s/AKfycbwVpgPBBwG9NcuzuHFblIyFTcnHIyQ6YH2DnTiqcqxcSD0fri8x8iZgF93mLYNeKbFRZw/exec",
+    "description": "",
+    "category": "Admin",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "Combine Photos to PDF",
+    "url": "https://script.google.com/a/macros/cch.edu.hk/s/AKfycbzcQYuMhGM--BDZEZfw2A-5H-FXbPpS_Ng1NP3n_1ZCQIIOvfDSPIucJX2YMyUmtyU3QQ/exec",
+    "description": "",
+    "category": "Admin",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "QR Code Generator",
+    "url": "https://script.google.com/a/macros/cch.edu.hk/s/AKfycbwU3ktJLf9ImW-pwsmqbYXmA7D4gFPd_D8OhQtnPLLai6qmolneaSKyB7F5QkNJIDNpcw/exec",
+    "description": "",
+    "category": "Admin",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "MC Analysis",
+    "url": "https://docs.google.com/spreadsheets/d/1yELj0ZLpXJ_cnbxUshWNDISNVWJscdMdSTR3iGLlUYk/edit?usp=drivesdk",
+    "description": "",
+    "category": "Exam",
+    "icon": "fa-solid fa-globe"
+  },
+  {
+    "title": "MC Scanner",
+    "url": "https://sites.google.com/cch.edu.hk/mc-scanner/mc?pli=1&authuser=0",
+    "description": "",
+    "category": "Exam",
+    "icon": "fa-solid fa-globe"
+  }
 ]
