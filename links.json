@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1700000000000,
+    "title": "GitHub 首頁",
+    "url": "https://github.com",
+    "description": "全球最大的代碼代管平台",
+    "category": "開發工具"
+  },
+  {
+    "id": 1700000000001,
+    "title": "Google",
+    "url": "https://google.com",
+    "description": "遇到問題就 Google 吧喵",
+    "category": "搜尋引擎"
+  }
+]
