@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貓咪網址收藏庫 🐾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f8ff; /* AliceBlue */
+            background-image: radial-gradient(#dbeafe 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+        .cat-ears {
+            position: relative;
+        }
+        .cat-ears::before, .cat-ears::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #3b82f6;
+        }
+        .cat-ears::before { left: 10px; transform: rotate(-15deg); }
+        .cat-ears::after { right: 10px; transform: rotate(15deg); }
+    </style>
+</head>
+<body class="min-h-screen text-blue-900">
+
+    <!-- 頂部導航 -->
+    <nav class="bg-blue-500 text-white shadow-md p-4 cat-ears mx-4 mt-6 rounded-t-2xl max-w-5xl md:mx-auto">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-cat text-3xl"></i>
+                <span>我的貓咪書籤</span>
+            </h1>
+            <div>
+                <button id="adminLoginBtn" onclick="promptLogin()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                    <i class="fa-solid fa-lock"></i> 管理員模式
+                </button>
+                <div id="adminControls" class="hidden flex gap-2">
+                    <button onclick="openModal()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                        <i class="fa-solid fa-plus"></i> 新增
+                    </button>
+                    <button onclick="exportJSON()" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                        <i class="fa-solid fa-download"></i> 儲存/匯出 JSON
+                    </button>
+                    <button onclick="logout()" class="bg-red-400 hover:bg-red-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                        <i class="fa-solid fa-right-from-bracket"></i> 登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容區 -->
+    <main class="max-w-5xl mx-auto p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-lg rounded-b-2xl mx-4 mb-10 min-h-[60vh]">
+        <div id="linksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 卡片會由 JS 動態生成 -->
+        </div>
+        <div id="loadingMsg" class="text-center py-10 text-blue-400 font-bold hidden">
+            <i class="fa-solid fa-paw fa-bounce text-2xl"></i> 正在尋找貓咪的寶藏...
+        </div>
+    </main>
+
+    <!-- 新增/編輯 Modal -->
+    <div id="linkModal" class="fixed inset-0 bg-blue-900/50 hidden flex items-center justify-center p-4 backdrop-blur-sm z-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border-t-8 border-blue-400 relative">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-paw"></i> <span id="modalTitle">新增網址</span>
+                </h2>
+                <input type="hidden" id="editId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">標題</label>
+                        <input type="text" id="inputTitle" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="例如：我的部落格">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">網址 (URL)</label>
+                        <input type="url" id="inputUrl" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">分類標籤</label>
+                        <input type="text" id="inputCategory" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="例如：好用工具">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">簡介</label>
+                        <textarea id="inputDesc" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none h-20" placeholder="簡單介紹一下這個網站..."></textarea>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition">取消</button>
+                    <button onclick="saveLink()" class="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg shadow transition">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let links = [];
+        let isAdmin = false;
+
+        // 初始化載入資料
+        async function loadLinks() {
+            document.getElementById('loadingMsg').classList.remove('hidden');
+            try {
+                // 加上時間戳防止 GitHub Pages 快取
+                const response = await fetch(`links.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('找不到 links.json');
+                links = await response.json();
+            } catch (error) {
+                console.warn('無法載入 JSON，可能檔案不存在或在本地直接開啟。使用預設空陣列。');
+                links = [];
+            }
+            document.getElementById('loadingMsg').classList.add('hidden');
+            renderLinks();
+        }
+
+        // 渲染卡片
+        function renderLinks() {
+            const container = document.getElementById('linksContainer');
+            container.innerHTML = '';
+
+            if(links.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400"><i class="fa-solid fa-cat text-4xl mb-2"></i><br>目前還沒有任何網址喵~</div>`;
+                return;
+            }
+
+            links.forEach(link => {
+                const card = document.createElement('div');
+                card.className = "bg-blue-50 border border-blue-100 p-5 rounded-2xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative group";
+                
+                // 產生卡片內容
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-md font-bold">${link.category || '未分類'}</span>
+                        ${isAdmin ? `
+                        <div class="flex gap-2">
+                            <button onclick="editLink(${link.id})" class="text-blue-500 hover:text-blue-700 bg-white rounded-full p-1 w-8 h-8 shadow"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteLink(${link.id})" class="text-red-400 hover:text-red-600 bg-white rounded-full p-1 w-8 h-8 shadow"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <a href="${link.url}" target="_blank" class="block">
+                        <h3 class="text-xl font-bold text-blue-800 mb-1 hover:text-blue-500 transition-colors">${link.title}</h3>
+                        <p class="text-sm text-gray-600 line-clamp-2 mb-3">${link.description || ''}</p>
+                        <div class="text-xs text-blue-400 break-all bg-white p-2 rounded border border-blue-50">
+                            <i class="fa-solid fa-link"></i> ${link.url}
+                        </div>
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 登入管理員
+        function promptLogin() {
+            const pwd = prompt("請輸入管理員密碼 (提示: 0115) 🐾：");
+            if (pwd === "0115") {
+                isAdmin = true;
+                document.getElementById('adminLoginBtn').classList.add('hidden');
+                document.getElementById('adminControls').classList.remove('hidden');
+                renderLinks(); // 重新渲染以顯示編輯/刪除按鈕
+            } else if (pwd !== null) {
+                alert("密碼錯誤喵！");
+            }
+        }
+
+        function logout() {
+            isAdmin = false;
+            document.getElementById('adminLoginBtn').classList.remove('hidden');
+            document.getElementById('adminControls').classList.add('hidden');
+            renderLinks();
+        }
+
+        // Modal 操作
+        function openModal(id = null) {
+            document.getElementById('linkModal').classList.remove('hidden');
+            if (id) {
+                const link = links.find(l => l.id === id);
+                document.getElementById('modalTitle').innerText = '編輯網址';
+                document.getElementById('editId').value = link.id;
+                document.getElementById('inputTitle').value = link.title;
+                document.getElementById('inputUrl').value = link.url;
+                document.getElementById('inputCategory').value = link.category;
+                document.getElementById('inputDesc').value = link.description;
+            } else {
+                document.getElementById('modalTitle').innerText = '新增網址';
+                document.getElementById('editId').value = '';
+                document.getElementById('inputTitle').value = '';
+                document.getElementById('inputUrl').value = '';
+                document.getElementById('inputCategory').value = '';
+                document.getElementById('inputDesc').value = '';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('linkModal').classList.add('hidden');
+        }
+
+        // 儲存（新增/編輯）
+        function saveLink() {
+            const id = document.getElementById('editId').value;
+            const newLink = {
+                id: id ? parseInt(id) : Date.now(), // 用 timestamp 當唯一 ID
+                title: document.getElementById('inputTitle').value || '未命名網址',
+                url: document.getElementById('inputUrl').value || '#',
+                category: document.getElementById('inputCategory').value || '未分類',
+                description: document.getElementById('inputDesc').value || ''
+            };
+
+            if (id) {
+                const index = links.findIndex(l => l.id === parseInt(id));
+                links[index] = newLink;
+            } else {
+                links.push(newLink);
+            }
+            
+            closeModal();
+            renderLinks();
+        }
+
+        // 刪除
+        function deleteLink(id) {
+            if(confirm("確定要刪除這個網址嗎喵？")) {
+                links = links.filter(l => l.id !== id);
+                renderLinks();
+            }
+        }
+
+        // 匯出 JSON
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(links, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("download", "links.json");
+            document.body.appendChild(downloadAnchorNode); 
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            alert("✅ links.json 已下載！請將它上傳到你的 GitHub Repo 覆蓋舊檔案，大約 1-2 分鐘後網頁就會更新。");
+        }
+
+        // 啟動
+        loadLinks();
+    </script>
+</body>
+</html>
