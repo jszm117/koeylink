@@ -7,51 +7,58 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@600;800&display=swap');
+        
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f0f8ff; /* AliceBlue */
-            background-image: radial-gradient(#dbeafe 2px, transparent 2px);
-            background-size: 30px 30px;
+            font-family: 'Noto Sans TC', 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
-        .cat-ears {
-            position: relative;
+
+        /* 玻璃擬物化 (Glassmorphism) */
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        .cat-ears::before, .cat-ears::after {
-            content: '';
-            position: absolute;
-            top: -15px;
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 25px solid #3b82f6;
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
-        .cat-ears::before { left: 10px; transform: rotate(-15deg); }
-        .cat-ears::after { right: 10px; transform: rotate(15deg); }
+
+        /* 隱藏原生捲軸，美化捲軸 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
     </style>
 </head>
-<body class="min-h-screen text-blue-900">
+<body class="text-slate-800 pb-12">
 
-    <!-- 頂部導航 -->
-    <nav class="bg-blue-500 text-white shadow-md p-4 cat-ears mx-4 mt-6 rounded-t-2xl max-w-5xl md:mx-auto">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold flex items-center gap-2">
-                <i class="fa-solid fa-cat text-3xl"></i>
-                <span>我的貓咪書籤</span>
+    <!-- 頂部導航 (Sticky Glass Navbar) -->
+    <nav class="glass sticky top-0 z-40 shadow-sm border-b border-white/40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <h1 class="text-2xl font-black text-blue-600 flex items-center gap-2 drop-shadow-sm">
+                <i class="fa-solid fa-cat text-3xl text-blue-500"></i>
+                <span class="tracking-wider">MeowLinks</span>
             </h1>
             <div>
-                <button id="adminLoginBtn" onclick="promptLogin()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                <button id="adminLoginBtn" onclick="promptLogin()" class="glass hover:bg-blue-50 text-blue-600 px-5 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-sm hover:shadow">
                     <i class="fa-solid fa-lock"></i> 管理員模式
                 </button>
-                <div id="adminControls" class="hidden flex gap-2">
-                    <button onclick="openModal()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
-                        <i class="fa-solid fa-plus"></i> 新增
+                <div id="adminControls" class="hidden flex flex-wrap gap-2">
+                    <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-plus"></i> 新增網址
                     </button>
-                    <button onclick="exportJSON()" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
-                        <i class="fa-solid fa-download"></i> 儲存/匯出 JSON
+                    <button onclick="exportJSON()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> 匯出 JSON
                     </button>
-                    <button onclick="logout()" class="bg-red-400 hover:bg-red-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-semibold shadow">
+                    <button onclick="logout()" class="glass text-slate-500 hover:text-red-500 px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-sm font-bold">
                         <i class="fa-solid fa-right-from-bracket"></i> 登出
                     </button>
                 </div>
@@ -59,45 +66,66 @@
         </div>
     </nav>
 
-    <!-- 主要內容區 -->
-    <main class="max-w-5xl mx-auto p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-lg rounded-b-2xl mx-4 mb-10 min-h-[60vh]">
-        <div id="linksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- 卡片會由 JS 動態生成 -->
+    <!-- 搜尋與分類區 -->
+    <header class="max-w-6xl mx-auto px-4 mt-8 mb-6">
+        <div class="glass-card rounded-2xl p-4 md:p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- 搜尋框 -->
+            <div class="relative w-full md:w-1/2">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-blue-400"></i>
+                </div>
+                <input type="text" id="searchInput" oninput="handleSearch()" class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 border-2 border-white focus:border-blue-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all text-slate-700 font-medium placeholder-slate-400 shadow-inner" placeholder="搜尋標題、簡介或網址...">
+            </div>
+            <!-- 動態分類按鈕區 -->
+            <div id="categoryFilter" class="w-full md:w-auto flex flex-wrap gap-2 justify-start md:justify-end">
+                <!-- 由 JS 渲染 -->
+            </div>
         </div>
-        <div id="loadingMsg" class="text-center py-10 text-blue-400 font-bold hidden">
-            <i class="fa-solid fa-paw fa-bounce text-2xl"></i> 正在尋找貓咪的寶藏...
+    </header>
+
+    <!-- 主要內容區 (網址卡片) -->
+    <main class="max-w-6xl mx-auto px-4 min-h-[50vh]">
+        <div id="loadingMsg" class="text-center py-20 text-blue-500 font-bold hidden">
+            <i class="fa-solid fa-cat fa-bounce text-4xl mb-3"></i>
+            <p class="text-lg tracking-widest">正在尋找貓咪的寶藏...</p>
+        </div>
+        
+        <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 卡片會由 JS 動態生成 -->
         </div>
     </main>
 
-    <!-- 新增/編輯 Modal -->
-    <div id="linkModal" class="fixed inset-0 bg-blue-900/50 hidden flex items-center justify-center p-4 backdrop-blur-sm z-50">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border-t-8 border-blue-400 relative">
-            <div class="p-6">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-paw"></i> <span id="modalTitle">新增網址</span>
+    <!-- 新增/編輯 Modal (Glassmorphism 風格) -->
+    <div id="linkModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="glass-card rounded-3xl w-full max-w-lg overflow-hidden border-t-8 border-blue-500 shadow-2xl relative">
+            <div class="p-8">
+                <h2 class="text-2xl font-black text-blue-700 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-paw text-blue-400"></i> <span id="modalTitle">新增網址</span>
                 </h2>
                 <input type="hidden" id="editId">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-bold mb-1">標題</label>
-                        <input type="text" id="inputTitle" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="例如：我的部落格">
+                        <label class="block text-sm font-bold text-slate-600 mb-1 pl-1">標題 <span class="text-red-400">*</span></label>
+                        <input type="text" id="inputTitle" class="w-full bg-white/70 border-2 border-white rounded-xl p-3 focus:border-blue-400 focus:bg-white focus:outline-none transition-all shadow-inner font-medium" placeholder="例如：我的部落格">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold mb-1">網址 (URL)</label>
-                        <input type="url" id="inputUrl" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="https://...">
+                        <label class="block text-sm font-bold text-slate-600 mb-1 pl-1">網址 (URL) <span class="text-red-400">*</span></label>
+                        <input type="url" id="inputUrl" class="w-full bg-white/70 border-2 border-white rounded-xl p-3 focus:border-blue-400 focus:bg-white focus:outline-none transition-all shadow-inner font-medium" placeholder="https://...">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold mb-1">分類標籤</label>
-                        <input type="text" id="inputCategory" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none" placeholder="例如：好用工具">
+                        <label class="block text-sm font-bold text-slate-600 mb-1 pl-1">分類標籤</label>
+                        <!-- 使用 input 配合 datalist，方便輸入新分類或選擇現有分類 -->
+                        <input type="text" id="inputCategory" list="categoryList" class="w-full bg-white/70 border-2 border-white rounded-xl p-3 focus:border-blue-400 focus:bg-white focus:outline-none transition-all shadow-inner font-medium" placeholder="例如：設計靈感, 好用工具...">
+                        <datalist id="categoryList"></datalist>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold mb-1">簡介</label>
-                        <textarea id="inputDesc" class="w-full border-2 border-blue-100 rounded-lg p-2 focus:border-blue-400 focus:outline-none h-20" placeholder="簡單介紹一下這個網站..."></textarea>
+                        <label class="block text-sm font-bold text-slate-600 mb-1 pl-1">簡介</label>
+                        <textarea id="inputDesc" class="w-full bg-white/70 border-2 border-white rounded-xl p-3 focus:border-blue-400 focus:bg-white focus:outline-none transition-all shadow-inner font-medium h-24 resize-none" placeholder="簡單介紹一下這個網站..."></textarea>
                     </div>
                 </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <button onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition">取消</button>
-                    <button onclick="saveLink()" class="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg shadow transition">儲存</button>
+                <div class="mt-8 flex justify-end gap-3">
+                    <button onclick="closeModal()" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors">取消</button>
+                    <button onclick="saveLink()" class="px-6 py-2.5 bg-blue-500 text-white font-bold hover:bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">儲存網址</button>
                 </div>
             </div>
         </div>
@@ -106,20 +134,71 @@
     <script>
         let links = [];
         let isAdmin = false;
+        let currentSearchQuery = "";
+        let currentFilterCategory = "全部";
 
         // 初始化載入資料
         async function loadLinks() {
             document.getElementById('loadingMsg').classList.remove('hidden');
             try {
-                // 加上時間戳防止 GitHub Pages 快取
                 const response = await fetch(`links.json?t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('找不到 links.json');
                 links = await response.json();
             } catch (error) {
-                console.warn('無法載入 JSON，可能檔案不存在或在本地直接開啟。使用預設空陣列。');
+                console.warn('無法載入 JSON，使用預設空陣列。');
                 links = [];
             }
             document.getElementById('loadingMsg').classList.add('hidden');
+            updateUI();
+        }
+
+        // 更新介面 (包含分類按鈕、網址卡片及 Datalist)
+        function updateUI() {
+            renderCategories();
+            renderLinks();
+            updateDatalist();
+        }
+
+        // 獲取所有不重複的分類
+        function getUniqueCategories() {
+            const categories = links.map(l => l.category).filter(c => c && c.trim() !== '');
+            return ["全部", ...new Set(categories)];
+        }
+
+        // 渲染分類篩選按鈕
+        function renderCategories() {
+            const container = document.getElementById('categoryFilter');
+            const categories = getUniqueCategories();
+            container.innerHTML = '';
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                const isActive = cat === currentFilterCategory;
+                
+                btn.className = isActive 
+                    ? "bg-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-md transition-all"
+                    : "glass hover:bg-white text-blue-600 px-4 py-1.5 rounded-full text-sm font-bold transition-all shadow-sm hover:shadow";
+                
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    currentFilterCategory = cat;
+                    renderCategories(); // 更新按鈕顏色
+                    renderLinks();      // 重新過濾列表
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // 更新表單內的下拉選單選項
+        function updateDatalist() {
+            const datalist = document.getElementById('categoryList');
+            const categories = getUniqueCategories().filter(c => c !== "全部");
+            datalist.innerHTML = categories.map(cat => `<option value="${cat}">`).join('');
+        }
+
+        // 處理搜尋輸入
+        function handleSearch() {
+            currentSearchQuery = document.getElementById('searchInput').value.toLowerCase();
             renderLinks();
         }
 
@@ -128,46 +207,62 @@
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
 
-            if(links.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400"><i class="fa-solid fa-cat text-4xl mb-2"></i><br>目前還沒有任何網址喵~</div>`;
+            // 根據搜尋與分類過濾資料
+            let filteredLinks = links.filter(link => {
+                const matchCategory = currentFilterCategory === "全部" || link.category === currentFilterCategory;
+                const matchSearch = link.title.toLowerCase().includes(currentSearchQuery) || 
+                                    link.url.toLowerCase().includes(currentSearchQuery) || 
+                                    (link.description && link.description.toLowerCase().includes(currentSearchQuery));
+                return matchCategory && matchSearch;
+            });
+
+            if(filteredLinks.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-20 text-slate-400 glass-card rounded-3xl">
+                        <i class="fa-solid fa-cat text-5xl mb-4 text-slate-300"></i>
+                        <h3 class="text-xl font-bold text-slate-500">搵唔到相關網址喵~</h3>
+                    </div>`;
                 return;
             }
 
-            links.forEach(link => {
+            // 反轉順序，讓最新加入的排在前面
+            filteredLinks.reverse().forEach(link => {
                 const card = document.createElement('div');
-                card.className = "bg-blue-50 border border-blue-100 p-5 rounded-2xl shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative group";
+                card.className = "glass-card rounded-2xl p-5 hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full";
                 
-                // 產生卡片內容
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-md font-bold">${link.category || '未分類'}</span>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="bg-blue-100/80 text-blue-700 text-xs px-2.5 py-1 rounded-md font-black shadow-sm tracking-wide">
+                            <i class="fa-solid fa-tag mr-1 opacity-70"></i>${link.category || '未分類'}
+                        </span>
                         ${isAdmin ? `
-                        <div class="flex gap-2">
-                            <button onclick="editLink(${link.id})" class="text-blue-500 hover:text-blue-700 bg-white rounded-full p-1 w-8 h-8 shadow"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteLink(${link.id})" class="text-red-400 hover:text-red-600 bg-white rounded-full p-1 w-8 h-8 shadow"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editLink(${link.id})" class="bg-white/80 hover:bg-blue-50 text-blue-500 rounded-full p-1.5 w-8 h-8 flex items-center justify-center shadow transition-colors"><i class="fa-solid fa-pen text-sm"></i></button>
+                            <button onclick="deleteLink(${link.id})" class="bg-white/80 hover:bg-red-50 text-red-500 rounded-full p-1.5 w-8 h-8 flex items-center justify-center shadow transition-colors"><i class="fa-solid fa-trash text-sm"></i></button>
                         </div>
                         ` : ''}
                     </div>
-                    <a href="${link.url}" target="_blank" class="block">
-                        <h3 class="text-xl font-bold text-blue-800 mb-1 hover:text-blue-500 transition-colors">${link.title}</h3>
-                        <p class="text-sm text-gray-600 line-clamp-2 mb-3">${link.description || ''}</p>
-                        <div class="text-xs text-blue-400 break-all bg-white p-2 rounded border border-blue-50">
-                            <i class="fa-solid fa-link"></i> ${link.url}
-                        </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">${link.title}</h3>
+                        <p class="text-sm text-slate-500 line-clamp-2 mb-4 font-medium">${link.description || '暫無簡介'}</p>
+                    </div>
+                    <a href="${link.url}" target="_blank" class="mt-auto block bg-white/50 hover:bg-white p-2.5 rounded-xl border border-white text-xs text-blue-500 font-bold break-all transition-colors flex items-center gap-2 group/link">
+                        <i class="fa-solid fa-arrow-up-right-from-square group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"></i>
+                        <span class="line-clamp-1">${link.url}</span>
                     </a>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // 登入管理員
+        // 登入管理員 (抽走密碼提示)
         function promptLogin() {
-            const pwd = prompt("請輸入管理員密碼 (提示: 0115) 🐾：");
+            const pwd = prompt("請輸入管理員密碼 🐾：");
             if (pwd === "0115") {
                 isAdmin = true;
                 document.getElementById('adminLoginBtn').classList.add('hidden');
                 document.getElementById('adminControls').classList.remove('hidden');
-                renderLinks(); // 重新渲染以顯示編輯/刪除按鈕
+                renderLinks(); 
             } else if (pwd !== null) {
                 alert("密碼錯誤喵！");
             }
@@ -189,8 +284,8 @@
                 document.getElementById('editId').value = link.id;
                 document.getElementById('inputTitle').value = link.title;
                 document.getElementById('inputUrl').value = link.url;
-                document.getElementById('inputCategory').value = link.category;
-                document.getElementById('inputDesc').value = link.description;
+                document.getElementById('inputCategory').value = link.category || '';
+                document.getElementById('inputDesc').value = link.description || '';
             } else {
                 document.getElementById('modalTitle').innerText = '新增網址';
                 document.getElementById('editId').value = '';
@@ -205,33 +300,44 @@
             document.getElementById('linkModal').classList.add('hidden');
         }
 
+        // 編輯網址
+        function editLink(id) { openModal(id); }
+
         // 儲存（新增/編輯）
         function saveLink() {
+            const title = document.getElementById('inputTitle').value.trim();
+            const url = document.getElementById('inputUrl').value.trim();
+            
+            if(!title || !url) {
+                alert("標題和網址是必填的喵！");
+                return;
+            }
+
             const id = document.getElementById('editId').value;
             const newLink = {
-                id: id ? parseInt(id) : Date.now(), // 用 timestamp 當唯一 ID
-                title: document.getElementById('inputTitle').value || '未命名網址',
-                url: document.getElementById('inputUrl').value || '#',
-                category: document.getElementById('inputCategory').value || '未分類',
-                description: document.getElementById('inputDesc').value || ''
+                id: id ? parseInt(id) : Date.now(),
+                title: title,
+                url: url,
+                category: document.getElementById('inputCategory').value.trim() || '未分類',
+                description: document.getElementById('inputDesc').value.trim()
             };
 
             if (id) {
                 const index = links.findIndex(l => l.id === parseInt(id));
                 links[index] = newLink;
             } else {
-                links.push(newLink);
+                links.push(newLink); // 預設加到最後 (渲染時會反轉顯示最新)
             }
             
             closeModal();
-            renderLinks();
+            updateUI(); // 更新介面、分類標籤和 Datalist
         }
 
         // 刪除
         function deleteLink(id) {
             if(confirm("確定要刪除這個網址嗎喵？")) {
                 links = links.filter(l => l.id !== id);
-                renderLinks();
+                updateUI();
             }
         }
 
@@ -239,12 +345,12 @@
         function exportJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(links, null, 2));
             const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("href", dataStr);
             downloadAnchorNode.setAttribute("download", "links.json");
             document.body.appendChild(downloadAnchorNode); 
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
-            alert("✅ links.json 已下載！請將它上傳到你的 GitHub Repo 覆蓋舊檔案，大約 1-2 分鐘後網頁就會更新。");
+            alert("✅ links.json 已下載！請上傳到 GitHub Repo 覆蓋舊檔案。");
         }
 
         // 啟動
